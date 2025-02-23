@@ -3,8 +3,8 @@ import fs from "fs";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUNDIARY_API_KEY,
-  api_secret: process.env.CLOUNDIARY_API_SECRET,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 const uploadOnCloudinary = async (localFilePath) => {
@@ -15,10 +15,13 @@ const uploadOnCloudinary = async (localFilePath) => {
       resource_type: "auto",
     });
     //file is uploaded
-    console.log("file uploaded on cloudiary", response.url);
+    //console.log("file uploaded on cloudiary", response.url);
+    fs.unlinkSync(localFilePath); // remove the locally saved file
     return response;
   } catch (error) {
-    fs.unlinkSync(localFilePath); // remove the locally saved file as the upload operation got failed
+    if (fs.existsSync(localFilePath)) {
+      fs.unlinkSync(localFilePath); // remove the locally saved file as the upload operation got failed
+    }
     console.log("error uploading file on cloudinary", error);
     return null;
   }
